@@ -88,12 +88,6 @@ vim.opt.pumheight = 10 -- pop up menu height
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = false
 
--- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
--- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -206,14 +200,197 @@ require('lazy').setup({
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     config = function() -- This is the function that runs, AFTER loading
-      require('which-key').setup()
-
-      -- Document existing key chains
-      require('which-key').register {
-        ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
-        ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-        ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
+      require('which-key').setup {
+        window = {
+          border = 'single', -- none, single, double, shadow
+          position = 'bottom', -- bottom, top
+          margin = { 1, 2, 1, 2 }, -- extra window margin [top, right, bottom, left]
+          padding = { 2, 2, 2, 2 }, -- extra window padding [top, right, bottom, left]
+          winblend = 0,
+        },
+        layout = {
+          height = { min = 4, max = 25 }, -- min and max height of the columns
+          width = { min = 20, max = 50 }, -- min and max width of the columns
+          spacing = 10, -- spacing between columns
+          align = 'left', -- align columns left, center or right
+        },
+        ignore_missing = false, -- enable this to hide mappings for which you didn't specify a label
+        show_help = true, -- show help message on the command line when the popup is visible
+        show_keys = true, -- show the currently pressed key and its label as a message in the command line
       }
+
+      local leader_options = {
+        mode = 'n', -- NORMAL mode
+        prefix = '<leader>',
+        buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
+        silent = true, -- use `silent` when creating keymaps
+        noremap = true, -- use `noremap` when creating keymaps
+        nowait = true, -- use `nowait` when creating keymaps
+      }
+
+      local leader_mappings = {
+        w = { '<cmd>w!<CR>', 'Save' },
+        q = { '<cmd>confirm q<CR>', 'Quit' },
+        c = { '<cmd>bd<CR>', 'Close Buffer' },
+        e = { '<cmd>NvimTreeToggle<CR>', 'Explorer' },
+        f = {
+          function()
+            require('telescope.builtin').find_files()
+          end,
+          'Find file',
+        },
+        b = {
+          name = 'Buffers',
+          j = { '<cmd>BufferLinePick<cr>', 'Jump' },
+          f = { '<cmd>Telescope buffers previewer=false<cr>', 'Find' },
+          b = { '<cmd>BufferLineCyclePrev<cr>', 'Previous' },
+          n = { '<cmd>BufferLineCycleNext<cr>', 'Next' },
+          W = { '<cmd>noautocmd w<cr>', 'Save without formatting (noautocmd)' },
+          e = {
+            '<cmd>BufferLinePickClose<cr>',
+            'Pick which buffer to close',
+          },
+          h = { '<cmd>BufferLineCloseLeft<cr>', 'Close all to the left' },
+          l = {
+            '<cmd>BufferLineCloseRight<cr>',
+            'Close all to the right',
+          },
+          D = {
+            '<cmd>BufferLineSortByDirectory<cr>',
+            'Sort by directory',
+          },
+          L = {
+            '<cmd>BufferLineSortByExtension<cr>',
+            'Sort by language',
+          },
+        },
+        g = {
+          name = 'Git',
+          g = { '<cmd>LazyGit<cr>', 'Lazygit' },
+          j = { "<cmd>lua require 'gitsigns'.next_hunk({navigation_message = false})<cr>", 'Next Hunk' },
+          k = { "<cmd>lua require 'gitsigns'.prev_hunk({navigation_message = false})<cr>", 'Prev Hunk' },
+          l = { "<cmd>lua require 'gitsigns'.blame_line()<cr>", 'Blame' },
+          p = { "<cmd>lua require 'gitsigns'.preview_hunk()<cr>", 'Preview Hunk' },
+          r = { "<cmd>lua require 'gitsigns'.reset_hunk()<cr>", 'Reset Hunk' },
+          R = { "<cmd>lua require 'gitsigns'.reset_buffer()<cr>", 'Reset Buffer' },
+          s = { "<cmd>lua require 'gitsigns'.stage_hunk()<cr>", 'Stage Hunk' },
+          u = {
+            "<cmd>lua require 'gitsigns'.undo_stage_hunk()<cr>",
+            'Undo Stage Hunk',
+          },
+          o = { '<cmd>Telescope git_status<cr>', 'Open changed file' },
+          b = { '<cmd>Telescope git_branches<cr>', 'Checkout branch' },
+          c = { '<cmd>Telescope git_commits<cr>', 'Checkout commit' },
+          C = {
+            '<cmd>Telescope git_bcommits<cr>',
+            'Checkout commit(for current file)',
+          },
+          d = {
+            '<cmd>Gitsigns diffthis HEAD<cr>',
+            'Git Diff',
+          },
+        },
+        p = {
+          name = 'Plugins',
+          i = { '<cmd>Lazy install<cr>', 'Install' },
+          s = { '<cmd>Lazy sync<cr>', 'Sync' },
+          S = { '<cmd>Lazy clear<cr>', 'Status' },
+          c = { '<cmd>Lazy clean<cr>', 'Clean' },
+          u = { '<cmd>Lazy update<cr>', 'Update' },
+          p = { '<cmd>Lazy profile<cr>', 'Profile' },
+          l = { '<cmd>Lazy log<cr>', 'Log' },
+          d = { '<cmd>Lazy debug<cr>', 'Debug' },
+        },
+        l = {
+          name = 'LSP',
+          a = { '<cmd>lua vim.lsp.buf.code_action()<cr>', 'Code Action' },
+          d = { '<cmd>Telescope diagnostics bufnr=0 theme=get_ivy<cr>', 'Buffer Diagnostics' },
+          w = { '<cmd>Telescope diagnostics<cr>', 'Diagnostics' },
+          f = {
+            function()
+              require('conform').format { async = true, lsp_fallback = true }
+            end,
+            'Format',
+          },
+          i = { '<cmd>LspInfo<cr>', 'Info' },
+          I = { '<cmd>Mason<cr>', 'Mason Info' },
+          j = {
+            '<cmd>lua vim.diagnostic.goto_next()<cr>',
+            'Next Diagnostic',
+          },
+          k = {
+            '<cmd>lua vim.diagnostic.goto_prev()<cr>',
+            'Prev Diagnostic',
+          },
+          l = { '<cmd>lua vim.lsp.codelens.run()<cr>', 'CodeLens Action' },
+          q = { '<cmd>lua vim.diagnostic.setloclist()<cr>', 'Quickfix' },
+          r = { '<cmd>lua vim.lsp.buf.rename()<cr>', 'Rename' },
+          s = { '<cmd>Telescope lsp_document_symbols<cr>', 'Document Symbols' },
+          S = {
+            '<cmd>Telescope lsp_dynamic_workspace_symbols<cr>',
+            'Workspace Symbols',
+          },
+          e = { '<cmd>Telescope quickfix<cr>', 'Telescope Quickfix' },
+        },
+        s = {
+          name = 'Search',
+          ['/'] = {
+            function()
+              require('telescope.builtin').live_grep {
+                grep_open_files = true,
+                prompt_title = 'Live Grep in Open Files',
+              }
+            end,
+            'Find Text in Open Files',
+          },
+          b = { '<cmd>Telescope git_branches<cr>', 'Checkout branch' },
+          c = { '<cmd>Telescope colorscheme<cr>', 'Colorscheme' },
+          f = { '<cmd>Telescope find_files<cr>', 'Find File' },
+          r = { '<cmd>Telescope oldfiles<cr>', 'Open Recent File' },
+          t = { '<cmd>Telescope live_grep<cr>', 'Find Text' },
+          k = { '<cmd>Telescope keymaps<cr>', 'Keymaps' },
+          C = { '<cmd>Telescope commands<cr>', 'Commands' },
+          l = { '<cmd>Telescope resume<cr>', 'Resume last search' },
+          p = {
+            "<cmd>lua require('telescope.builtin').colorscheme({enable_preview = true})<cr>",
+            'Colorscheme with Preview',
+          },
+          n = {
+            function()
+              require('telescope.builtin').find_files {
+                cwd = vim.fn.stdpath 'config',
+              }
+            end,
+            'Search Nvim Config Files',
+          },
+        },
+        T = {
+          name = 'Treesitter',
+          i = { ':TSConfigInfo<cr>', 'Info' },
+        },
+      }
+
+      local g_options = {
+        mode = 'n', -- NORMAL mode
+        prefix = 'g',
+        buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
+        silent = true, -- use `silent` when creating keymaps
+        noremap = true, -- use `noremap` when creating keymaps
+        nowait = true, -- use `nowait` when creating keymaps
+      }
+
+      local g_mappings = {
+        d = { '<cmd>Telescope lsp_definitions<cr>', 'Go-to Definition' },
+        D = { '<cmd>lua vim.lsp.buf.declaration<cr>', 'Go-to Declaration' },
+        h = { '<cmd>lua vim.lsp.buf.hover<cr>', 'Go-to Hover' },
+        I = { '<cmd>Telescope lsp_implementations<cr>', 'Go-to Implementation' },
+        r = { '<cmd>Telescope lsp_references<cr>', 'Go-to Definition' },
+        t = { '<cmd>Telescope lsp_type_definitions<cr>', 'Go-to Type Definition' },
+      }
+
+      -- Register keys
+      require('which-key').register(leader_mappings, leader_options)
+      require('which-key').register(g_mappings, g_options)
     end,
   },
 
@@ -293,42 +470,6 @@ require('lazy').setup({
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
-
-      -- See `:help telescope.builtin`
-      local builtin = require 'telescope.builtin'
-      vim.keymap.set('n', '<leader>sr', builtin.oldfiles, { desc = '[S]earch [R]ecent Files' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>s.', builtin.resume, { desc = '[S]earch Resume' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
-      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-
-      -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set('n', '<leader>/', function()
-        -- You can pass additional configuration to Telescope to change the theme, layout, etc.
-        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-          winblend = 0,
-          previewer = false,
-        })
-      end, { desc = '[/] Fuzzily search in current buffer' })
-
-      -- It's also possible to pass additional configuration options.
-      --  See `:help telescope.builtin.live_grep()` for information about particular keys
-      vim.keymap.set('n', '<leader>s/', function()
-        builtin.live_grep {
-          grep_open_files = true,
-          prompt_title = 'Live Grep in Open Files',
-        }
-      end, { desc = '[S]earch [/] in Open Files' })
-
-      -- Shortcut for searching your Neovim configuration files
-      vim.keymap.set('n', '<leader>sn', function()
-        builtin.find_files { cwd = vim.fn.stdpath 'config' }
-      end, { desc = '[S]earch [N]eovim files' })
     end,
   },
 
@@ -381,56 +522,6 @@ require('lazy').setup({
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
-          -- NOTE: Remember that Lua is a real programming language, and as such it is possible
-          -- to define small helper and utility functions so you don't have to repeat yourself.
-          --
-          -- In this case, we create a function that lets us more easily define mappings specific
-          -- for LSP related items. It sets the mode, buffer and description for us each time.
-          local map = function(keys, func, desc)
-            vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
-          end
-
-          -- Jump to the definition of the word under your cursor.
-          --  This is where a variable was first declared, or where a function is defined, etc.
-          --  To jump back, press <C-t>.
-          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-
-          -- Find references for the word under your cursor.
-          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-
-          -- Jump to the implementation of the word under your cursor.
-          --  Useful when your language has ways of declaring types without an actual implementation.
-          map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-
-          -- Jump to the type of the word under your cursor.
-          --  Useful when you're not sure what type a variable is and you want to see
-          --  the definition of its *type*, not where it was *defined*.
-          map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
-
-          -- Fuzzy find all the symbols in your current document.
-          --  Symbols are things like variables, functions, types, etc.
-          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-
-          -- Fuzzy find all the symbols in your current workspace.
-          --  Similar to document symbols, except searches over your entire project.
-          map('<leader>dws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-
-          -- Rename the variable under your cursor.
-          --  Most Language Servers support renaming across files, etc.
-          map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-
-          -- Execute a code action, usually your cursor needs to be on top of an error
-          -- or a suggestion from your LSP for this to activate.
-          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-
-          -- Opens a popup that displays documentation about the word under your cursor
-          --  See `:help K` for why this keymap.
-          map('K', vim.lsp.buf.hover, 'Hover Documentation')
-
-          -- WARN: This is not Goto Definition, this is Goto Declaration.
-          --  For example, in C this would take you to the header.
-          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
           --    See `:help CursorHold` for information about when this is executed
@@ -531,16 +622,6 @@ require('lazy').setup({
   { -- Autoformat
     'stevearc/conform.nvim',
     lazy = false,
-    keys = {
-      {
-        '<leader>f',
-        function()
-          require('conform').format { async = true, lsp_fallback = true }
-        end,
-        mode = '',
-        desc = '[F]ormat buffer',
-      },
-    },
     opts = {
       notify_on_error = false,
       format_on_save = false,
@@ -735,19 +816,37 @@ require('lazy').setup({
 
       -- Start page
       require('mini.starter').setup {
-        header = 'Neovim: Welcome back Manny',
-        footer = '',
+        footer = os.date(),
+        header = table.concat({
+          [[ _        _______  _______          _________ _______ ]],
+          [[( (    /|(  ____ \(  ___  )|\     /|\__   __/(       )]],
+          [[|  \  ( || (    \/| (   ) || )   ( |   ) (   | () () |]],
+          [[|   \ | || (__    | |   | || |   | |   | |   | || || |]],
+          [[| (\ \) ||  __)   | |   | |( (   ) )   | |   | |(_)| |]],
+          [[| | \   || (      | |   | | \ \_/ /    | |   | |   | |]],
+          [[| )  \  || (____/\| (___) |  \   /  ___) (___| )   ( |]],
+          [[|/    )_)(_______/(_______)   \_/   \_______/|/     \|]],
+          [[                                                      ]],
+        }, '\n'),
         items = {
           require('mini.starter').sections.persistence(),
-          require('mini.starter').sections.recent_files(5, false),
           require('mini.starter').sections.recent_files(5, true),
+          require('mini.starter').sections.recent_files(5, false),
           require('mini.starter').sections.telescope(),
           require('mini.starter').sections.builtin_actions(),
         },
         content_hooks = {
-          require('mini.starter').gen_hook.adding_bullet(),
+          function(content)
+            local blank_content_line = { { type = 'empty', string = '' } }
+            local section_coords = require('mini.starter').content_coords(content, 'section')
+            -- Insert backwards to not affect coordinates
+            for i = #section_coords, 1, -1 do
+              table.insert(content, section_coords[i].line + 1, blank_content_line)
+            end
+            return content
+          end,
+          require('mini.starter').gen_hook.adding_bullet '  » ',
           require('mini.starter').gen_hook.aligning('center', 'center'),
-          require('mini.starter').gen_hook.padding(3, 2),
         },
       }
 
@@ -833,8 +932,8 @@ require('lazy').setup({
       require('nvim-tree').setup {
         view = { width = 40 },
         filters = { dotfiles = true },
+        update_focused_file = { enable = true },
       }
-      vim.keymap.set('n', '<leader>e', '<cmd>NvimTreeToggle<CR>')
     end,
     cmd = { 'NvimTreeToggle', 'NvimTreeOpen', 'NvimTreeFocus', 'NvimTreeFindFileToggle' },
     event = 'User DirOpened',
@@ -881,7 +980,6 @@ require('lazy').setup({
 
       vim.keymap.set('n', '<S-h>', '<cmd>BufferLineCyclePrev<CR>')
       vim.keymap.set('n', '<S-l>', '<cmd>BufferLineCycleNext<CR>')
-      vim.keymap.set('n', '<leader>c', '<cmd>bd<CR>')
     end,
   },
   {
@@ -897,11 +995,6 @@ require('lazy').setup({
     dependencies = {
       'nvim-lua/plenary.nvim',
     },
-    -- setting the keybinding for LazyGit with 'keys' is recommended in
-    -- order to load the plugin when the command is run for the first time
-    keys = {
-      { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
-    },
   },
   {
     'folke/persistence.nvim',
@@ -913,11 +1006,40 @@ require('lazy').setup({
   {
     'akinsho/toggleterm.nvim',
     config = function()
-      require('toggleterm').setup()
+      require('toggleterm').setup {
+        on_config_done = nil,
+        -- size can be a number or function which is passed the current terminal
+        size = 20,
+        open_mapping = [[<c-\>]],
+        hide_numbers = true, -- hide the number column in toggleterm buffers
+        shade_filetypes = {},
+        shade_terminals = true,
+        shading_factor = 2, -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
+        start_in_insert = true,
+        insert_mappings = true, -- whether or not the open mapping applies in insert mode
+        persist_size = false,
+        -- direction = 'vertical' | 'horizontal' | 'window' | 'float',
+        direction = 'float',
+        close_on_exit = true, -- close the terminal window when the process exits
+        shell = nil, -- change the default shell
+        -- This field is only relevant if direction is set to 'float'
+        float_opts = {
+          -- The border key is *almost* the same as 'nvim_win_open'
+          -- see :h nvim_win_open for details on borders however
+          -- the 'curved' border is a custom border type
+          -- not natively supported but implemented in this plugin.
+          -- border = 'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
+          border = 'curved',
+          -- width = <value>,
+          -- height = <value>,
+          winblend = 0,
+          highlights = {
+            border = 'Normal',
+            background = 'Normal',
+          },
+        },
+      }
     end,
-    keys = {
-      { '<C-\\>', '<cmd>ToggleTerm direction=float<cr>', desc = 'ToggleTerm' },
-    },
   },
   {
     'nvim-lualine/lualine.nvim',
