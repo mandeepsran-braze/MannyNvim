@@ -1,10 +1,15 @@
 return {
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-
+  { 'github/copilot.vim' },
+  { 'xiyaowong/transparent.nvim' },
   -- "gc" to comment visual regions/lines
-  'numToStr/Comment.nvim',
-
+  {
+    'numToStr/Comment.nvim',
+    config = function()
+      require('Comment').setup()
+    end,
+  },
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     config = function()
@@ -192,6 +197,8 @@ return {
               callback = vim.lsp.buf.clear_references,
             })
           end
+          -- TODO: Fix this into key mappings
+          vim.keymap.set('n', 'gh', vim.lsp.buf.hover, { buffer = event.buf, desc = 'Go-to hover' })
         end,
       })
 
@@ -427,7 +434,15 @@ return {
   },
 
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  {
+    'folke/todo-comments.nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = { signs = false },
+    config = function()
+      require('todo-comments').setup()
+    end,
+  },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -491,7 +506,7 @@ return {
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'ruby' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -568,7 +583,6 @@ return {
     cmd = { 'NvimTreeToggle', 'NvimTreeOpen', 'NvimTreeFocus', 'NvimTreeFindFileToggle' },
     event = 'User DirOpened',
   },
-  { 'xiyaowong/transparent.nvim' },
   -- { 'hiphish/rainbow-delimiters.nvim' },
   {
     'nvim-lualine/lualine.nvim',

@@ -1,3 +1,5 @@
+local icons = require 'icons'
+
 local M = {}
 
 local function is_ft(b, ft)
@@ -42,14 +44,15 @@ M.config = {
     close_command = function(bufnr) -- can be a string | function, see "Mouse actions"
       M.buf_kill('bd', bufnr, false)
     end,
-    right_mouse_command = 'vert sbuffer %d', -- can be a string | function, see "Mouse actions"
-    left_mouse_command = 'buffer %d', -- can be a string | function, see "Mouse actions"
-    middle_mouse_command = nil, -- can be a string | function, see "Mouse actions"
-    style_preset = require('bufferline').style_preset.minimal,
-    indicator = {
-      icon = '▎',
-      style = 'icon',
-    },
+      indicator = {
+        icon = icons.ui.BoldLineLeft, -- this should be omitted if indicator style is not 'icon'
+        style = "icon", -- can also be 'underline'|'none',
+      },
+      buffer_close_icon = icons.ui.Close,
+      modified_icon = icons.ui.Circle,
+      close_icon = icons.ui.BoldClose,
+      left_trunc_marker = icons.ui.ArrowCircleLeft,
+      right_trunc_marker = icons.ui.ArrowCircleRight,
     --- name_formatter can be used to change the buffer's label in the bufferline.
     --- Please note some names can/will break the
     --- bufferline so use this at your discretion knowing that it has
