@@ -31,11 +31,10 @@ M.setup = function()
     noremap = true, -- use `noremap` when creating keymaps
     nowait = true, -- use `nowait` when creating keymaps
   }
-
   local leader_mappings = {
     w = { '<cmd>w!<CR>', 'Save' },
     q = { '<cmd>confirm q<CR>', 'Quit' },
-    c = { '<cmd>bd<CR>', 'Close Buffer' },
+    c = { '<cmd>BufferKill<CR>', 'Close Buffer' },
     e = { '<cmd>NvimTreeToggle<CR>', 'Explorer' },
     f = {
       function()

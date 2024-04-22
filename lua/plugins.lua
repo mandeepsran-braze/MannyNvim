@@ -19,6 +19,33 @@ return {
       require('plugins.which-key').setup()
     end,
   },
+  {
+    'akinsho/bufferline.nvim',
+    dependencies = 'nvim-tree/nvim-web-devicons',
+    config = function()
+      require('plugins.bufferline').setup()
+    end,
+  },
+  {
+    'kdheepak/lazygit.nvim',
+    cmd = {
+      'LazyGit',
+      'LazyGitConfig',
+      'LazyGitCurrentFile',
+      'LazyGitFilter',
+      'LazyGitFilterCurrentFile',
+    },
+    -- optional for floating window border decoration
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+    },
+  },
+  {
+    'akinsho/toggleterm.nvim',
+    config = function()
+      require('plugins.toggleterm').setup()
+    end,
+  },
 
   -- NOTE: Plugins can specify dependencies.
   --
@@ -535,103 +562,14 @@ return {
     'nvim-tree/nvim-tree.lua',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
-      require('nvim-tree').setup {
-        view = { width = 40 },
-        filters = { dotfiles = true },
-        update_focused_file = { enable = true },
-      }
+      require('plugins.nvim-tree').setup()
     end,
+    enabled = true,
     cmd = { 'NvimTreeToggle', 'NvimTreeOpen', 'NvimTreeFocus', 'NvimTreeFindFileToggle' },
     event = 'User DirOpened',
   },
   { 'xiyaowong/transparent.nvim' },
   -- { 'hiphish/rainbow-delimiters.nvim' },
-  {
-    'akinsho/bufferline.nvim',
-    dependencies = 'nvim-tree/nvim-web-devicons',
-    config = function()
-      require('bufferline').setup {
-        on_config_done = nil,
-        highlights = {
-          background = {
-            italic = true,
-          },
-          buffer_selected = {
-            bold = true,
-          },
-        },
-        options = {
-          keymap = {
-            normal_mode = {},
-          },
-          active = true,
-          mode = 'buffers', -- set to "tabs" to only show tabpages instead
-          numbers = 'none', -- can be "none" | "ordinal" | "buffer_id" | "both" | function
-          close_command = function(bufnr) -- can be a string | function, see "Mouse actions"
-            _G.buf_kill('bd', bufnr, false)
-          end,
-          right_mouse_command = 'vert sbuffer %d', -- can be a string | function, see "Mouse actions"
-          left_mouse_command = 'buffer %d', -- can be a string | function, see "Mouse actions"
-          middle_mouse_command = nil, -- can be a string | function, see "Mouse actions"
-          style_preset = require('bufferline').style_preset.minimal,
-          indicator = {
-            icon = '▎',
-            style = 'icon',
-          },
-          diagnostics = 'nvim_lsp',
-          offsets = {
-            {
-              filetype = 'NvimTree',
-              text = 'File Explorer',
-              text_align = 'left',
-              separator = true,
-            },
-            {
-              filetype = 'lazy',
-              text = 'Lazy',
-              highlight = 'PanelHeading',
-              padding = 1,
-            },
-          },
-          persist_buffer_sort = true, -- whether or not custom sorted buffers should persist
-          -- can also be a table containing 2 custom separators
-          -- [focused and unfocused]. eg: { '|', '|' }
-          separator_style = 'thin',
-          enforce_regular_tabs = false,
-          always_show_bufferline = false,
-          hover = {
-            enabled = false, -- requires nvim 0.8+
-            delay = 200,
-            reveal = { 'close' },
-          },
-          sort_by = 'id',
-        },
-      }
-
-      vim.keymap.set('n', '<S-h>', '<cmd>BufferLineCyclePrev<CR>')
-      vim.keymap.set('n', '<S-l>', '<cmd>BufferLineCycleNext<CR>')
-    end,
-  },
-  {
-    'kdheepak/lazygit.nvim',
-    cmd = {
-      'LazyGit',
-      'LazyGitConfig',
-      'LazyGitCurrentFile',
-      'LazyGitFilter',
-      'LazyGitFilterCurrentFile',
-    },
-    -- optional for floating window border decoration
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-    },
-  },
-  {
-    'akinsho/toggleterm.nvim',
-    config = function()
-      require('plugins.toggleterm').setup()
-    end,
-  },
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
