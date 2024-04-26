@@ -185,18 +185,18 @@ return {
           --    See `:help CursorHold` for information about when this is executed
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
-          local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client.server_capabilities.documentHighlightProvider then
-            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-              buffer = event.buf,
-              callback = vim.lsp.buf.document_highlight,
-            })
-
-            vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-              buffer = event.buf,
-              callback = vim.lsp.buf.clear_references,
-            })
-          end
+          -- local client = vim.lsp.get_client_by_id(event.data.client_id)
+          -- if client and client.server_capabilities.documentHighlightProvider then
+          --   vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+          --     buffer = event.buf,
+          --     callback = vim.lsp.buf.document_highlight,
+          --   })
+          --
+          --   vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+          --     buffer = event.buf,
+          --     callback = vim.lsp.buf.clear_references,
+          --   })
+          -- end
           -- TODO: Fix this into key mappings
           vim.keymap.set('n', 'gh', vim.lsp.buf.hover, { buffer = event.buf, desc = 'Go-to hover' })
         end,
@@ -229,7 +229,7 @@ return {
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        -- tsserver = {},
+        tsserver = {},
         --
 
         lua_ls = {
@@ -414,40 +414,40 @@ return {
       }
     end,
   },
-  {
-    'mohretz/gruvbox',
-    init = function()
-      vim.cmd.colorscheme 'gruvbox'
-    end,
-  },
   -- {
-  --   'ellisonlao/gruvbox.nvim',
-  --   priority = 1000, -- Make sure to load this before all the other start plugins.
-  --   config = function()
-  --     require('gruvbox').setup {
-  --       transparent_mode = true,
-  --       overrides = {
-  --         NvimTreeSymlink = {},
-  --         NvimTreeRootFolder = {},
-  --         NvimTreeFolderIcon = {},
-  --         NvimTreeFileIcon = {},
-  --         NvimTreeExecFile = {},
-  --         NvimTreeOpenedFile = {},
-  --         NvimTreeSpecialFile = {},
-  --         NvimTreeImageFile = {},
-  --         NvimTreeIndentMarker = {},
-  --         NvimTreeGitDirty = {},
-  --         NvimTreeGitStaged = {},
-  --         NvimTreeGitMerge = {},
-  --         NvimTreeGitRenamed = {},
-  --         NvimTreeGitNew = {},
-  --         NvimTreeGitDeleted = {},
-  --         NvimTreeWindowPicker = {},
-  --       },
-  --     }
+  --   'morhetz/gruvbox',
+  --   init = function()
   --     vim.cmd.colorscheme 'gruvbox'
   --   end,
   -- },
+  {
+    'ellisonleao/gruvbox.nvim',
+    priority = 1000, -- Make sure to load this before all the other start plugins.
+    config = function()
+      require('gruvbox').setup {
+        transparent_mode = true,
+        overrides = {
+          NvimTreeSymlink = {},
+          NvimTreeRootFolder = {},
+          NvimTreeFolderIcon = {},
+          NvimTreeFileIcon = {},
+          NvimTreeExecFile = {},
+          NvimTreeOpenedFile = {},
+          NvimTreeSpecialFile = {},
+          NvimTreeImageFile = {},
+          NvimTreeIndentMarker = {},
+          NvimTreeGitDirty = {},
+          NvimTreeGitStaged = {},
+          NvimTreeGitMerge = {},
+          NvimTreeGitRenamed = {},
+          NvimTreeGitNew = {},
+          NvimTreeGitDeleted = {},
+          NvimTreeWindowPicker = {},
+        },
+      }
+      vim.cmd.colorscheme 'gruvbox'
+    end,
+  },
 
   -- Highlight todo, notes, etc in comments
   {
@@ -496,7 +496,7 @@ return {
           [[                                                      ]],
         }, '\n'),
         items = {
-          require('mini.starter').sections.persistence(),
+          -- require('mini.starter').sections.persistence(),
           require('mini.starter').sections.recent_files(5, true),
           require('mini.starter').sections.recent_files(5, false),
           require('mini.starter').sections.telescope(),
