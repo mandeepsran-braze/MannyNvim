@@ -6,7 +6,6 @@ local function is_ft(b, ft)
   return vim.bo[b].filetype == ft
 end
 
-
 local function custom_filter(buf, buf_nums)
   local logs = vim.tbl_filter(function(b)
     return is_ft(b, 'log')
@@ -27,11 +26,9 @@ end
 M.config = {
   on_config_done = nil,
   highlights = {
-    background = {
-      italic = true,
-    },
     buffer_selected = {
       bold = true,
+      italic = true,
     },
   },
   options = {
@@ -44,15 +41,15 @@ M.config = {
     close_command = function(bufnr) -- can be a string | function, see "Mouse actions"
       M.buf_kill('bd', bufnr, false)
     end,
-      indicator = {
-        icon = icons.ui.BoldLineLeft, -- this should be omitted if indicator style is not 'icon'
-        style = "icon", -- can also be 'underline'|'none',
-      },
-      buffer_close_icon = icons.ui.Close,
-      modified_icon = icons.ui.Circle,
-      close_icon = icons.ui.BoldClose,
-      left_trunc_marker = icons.ui.ArrowCircleLeft,
-      right_trunc_marker = icons.ui.ArrowCircleRight,
+    indicator = {
+      icon = icons.ui.BoldLineLeft, -- this should be omitted if indicator style is not 'icon'
+      style = 'icon', -- can also be 'underline'|'none',
+    },
+    buffer_close_icon = icons.ui.Close,
+    modified_icon = icons.ui.Circle,
+    close_icon = icons.ui.BoldClose,
+    left_trunc_marker = icons.ui.ArrowCircleLeft,
+    right_trunc_marker = icons.ui.ArrowCircleRight,
     --- name_formatter can be used to change the buffer's label in the bufferline.
     --- Please note some names can/will break the
     --- bufferline so use this at your discretion knowing that it has
@@ -97,6 +94,7 @@ M.config = {
       delay = 200,
       reveal = { 'close' },
     },
+    themable = true,
     sort_by = 'id',
   },
 }

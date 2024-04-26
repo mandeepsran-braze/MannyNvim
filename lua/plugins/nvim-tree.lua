@@ -13,12 +13,11 @@ M.config = {
   sync_root_with_cwd = true,
   reload_on_bufenter = false,
   respect_buf_cwd = false,
-  on_attach = 'default',
   select_prompts = false,
   view = {
     adaptive_size = false,
     centralize_selection = true,
-    width = 60,
+    width = 50,
     side = 'left',
     preserve_window_proportions = false,
     number = false,
@@ -214,7 +213,29 @@ M.config = {
   },
 }
 
+local function on_attach(bufnr)
+  local api = require 'nvim-tree.api'
+
+  local function opts(desc)
+    return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+  end
+
+  api.config.mappings.default_on_attach(bufnr)
+
+  local useful_keys = {
+    ['l'] = { api.node.open.edit, opts 'Open' },
+    ['o'] = { api.node.open.edit, opts 'Open' },
+    ['<CR>'] = { api.node.open.edit, opts 'Open' },
+    ['v'] = { api.node.open.vertical, opts 'Open: Vertical Split' },
+    ['h'] = { api.node.navigate.parent_close, opts 'Close Directory' },
+    ['C'] = { api.tree.change_root_to_node, opts 'CD' },
+  }
+
+  require('keymaps').load_mode('n', useful_keys)
+end
+
 M.setup = function()
+  M.config.on_attach = on_attach
   require('nvim-tree').setup(M.config)
 end
 

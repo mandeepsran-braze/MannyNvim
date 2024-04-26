@@ -3,11 +3,11 @@ local M = {}
 M.config = {
   require('which-key').setup {
     window = {
-      border = 'single', -- none, single, double, shadow
+      border = 'double', -- none, single, double, shadow
       position = 'bottom', -- bottom, top
       margin = { 1, 2, 1, 2 }, -- extra window margin [top, right, bottom, left]
       padding = { 2, 2, 2, 2 }, -- extra window padding [top, right, bottom, left]
-      winblend = 0,
+      winblend = 1,
     },
     layout = {
       height = { min = 4, max = 25 }, -- min and max height of the columns
@@ -185,7 +185,7 @@ M.setup = function()
   local g_mappings = {
     d = { '<cmd>Telescope lsp_definitions<cr>', 'Go-to Definition' },
     D = { '<cmd>lua vim.lsp.buf.declaration<cr>', 'Go-to Declaration' },
-    -- h = { '<cmd>lua vim.lsp.buf.hover()<cr>', 'Go-to Hover' },
+    h = { '<cmd>lua vim.lsp.buf.hover()<cr>', 'Go-to Hover' },
     I = { '<cmd>Telescope lsp_implementations<cr>', 'Go-to Implementation' },
     r = { '<cmd>Telescope lsp_references<cr>', 'Go-to Definition' },
     t = { '<cmd>Telescope lsp_type_definitions<cr>', 'Go-to Type Definition' },

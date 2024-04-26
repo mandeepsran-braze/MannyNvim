@@ -1,7 +1,7 @@
 return {
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-  { 'github/copilot.vim' },
+  -- { 'github/copilot.vim' },
   { 'xiyaowong/transparent.nvim' },
   -- "gc" to comment visual regions/lines
   {
@@ -414,24 +414,40 @@ return {
       }
     end,
   },
-
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'morhetz/gruvbox',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+  {
+    'mohretz/gruvbox',
     init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
       vim.cmd.colorscheme 'gruvbox'
-
-      -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
     end,
   },
+  -- {
+  --   'ellisonlao/gruvbox.nvim',
+  --   priority = 1000, -- Make sure to load this before all the other start plugins.
+  --   config = function()
+  --     require('gruvbox').setup {
+  --       transparent_mode = true,
+  --       overrides = {
+  --         NvimTreeSymlink = {},
+  --         NvimTreeRootFolder = {},
+  --         NvimTreeFolderIcon = {},
+  --         NvimTreeFileIcon = {},
+  --         NvimTreeExecFile = {},
+  --         NvimTreeOpenedFile = {},
+  --         NvimTreeSpecialFile = {},
+  --         NvimTreeImageFile = {},
+  --         NvimTreeIndentMarker = {},
+  --         NvimTreeGitDirty = {},
+  --         NvimTreeGitStaged = {},
+  --         NvimTreeGitMerge = {},
+  --         NvimTreeGitRenamed = {},
+  --         NvimTreeGitNew = {},
+  --         NvimTreeGitDeleted = {},
+  --         NvimTreeWindowPicker = {},
+  --       },
+  --     }
+  --     vim.cmd.colorscheme 'gruvbox'
+  --   end,
+  -- },
 
   -- Highlight todo, notes, etc in comments
   {
@@ -583,7 +599,7 @@ return {
     cmd = { 'NvimTreeToggle', 'NvimTreeOpen', 'NvimTreeFocus', 'NvimTreeFindFileToggle' },
     event = 'User DirOpened',
   },
-  -- { 'hiphish/rainbow-delimiters.nvim' },
+  { 'hiphish/rainbow-delimiters.nvim' },
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
