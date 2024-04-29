@@ -1,7 +1,7 @@
 return {
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-  -- { 'github/copilot.vim' },
+  { 'github/copilot.vim' },
   { 'xiyaowong/transparent.nvim' },
   -- "gc" to comment visual regions/lines
   {
@@ -278,7 +278,6 @@ return {
       }
     end,
   },
-
   { -- Autoformat
     'stevearc/conform.nvim',
     lazy = false,
@@ -496,7 +495,10 @@ return {
           [[                                                      ]],
         }, '\n'),
         items = {
-          -- require('mini.starter').sections.persistence(),
+          {
+            { action = 'lua require("persistence").load({ last = true })', name = 'Previous Session', section = 'Persistence' },
+            { action = 'lua require("persistence").load()', name = 'Previous Session in Directory', section = 'Persistence' },
+          },
           require('mini.starter').sections.recent_files(5, true),
           require('mini.starter').sections.recent_files(5, false),
           require('mini.starter').sections.telescope(),
@@ -622,7 +624,7 @@ return {
     'folke/persistence.nvim',
     event = 'BufReadPre', -- this will only start session saving when an actual file was opened
     config = function()
-      require('persistence').setup()
+      require('persistence').setup {}
     end,
   },
 }
