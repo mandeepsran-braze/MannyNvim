@@ -187,7 +187,7 @@ M.setup = function()
     D = { '<cmd>lua vim.lsp.buf.declaration<cr>', 'Go-to Declaration' },
     h = { '<cmd>lua vim.lsp.buf.hover()<cr>', 'Go-to Hover' },
     I = { '<cmd>Telescope lsp_implementations<cr>', 'Go-to Implementation' },
-    r = { '<cmd>Telescope lsp_references<cr>', 'Go-to Definition' },
+    r = { '<cmd>Telescope lsp_references<cr>', 'Go-to References' },
     t = { '<cmd>Telescope lsp_type_definitions<cr>', 'Go-to Type Definition' },
   }
 
