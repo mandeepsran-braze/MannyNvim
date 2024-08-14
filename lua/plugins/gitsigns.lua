@@ -49,7 +49,6 @@ M.config = {
     row = 0,
     col = 1,
   },
-  yadm = { enable = false },
 }
 
 M.setup = function()

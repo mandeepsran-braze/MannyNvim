@@ -2,20 +2,76 @@ local M = {}
 
 M.config = {
   require('which-key').setup {
-    window = {
-      border = 'double', -- none, single, double, shadow
-      position = 'bottom', -- bottom, top
-      margin = { 1, 2, 1, 2 }, -- extra window margin [top, right, bottom, left]
-      padding = { 2, 2, 2, 2 }, -- extra window padding [top, right, bottom, left]
-      winblend = 1,
+    preset = 'classic',
+    win = {
+      -- don't allow the popup to overlap with the cursor
+      no_overlap = true,
+      height = { min = 4, max = 25 },
+      col = 0,
+      row = math.huge,
+      border = 'double',
+      padding = { 1, 2 }, -- extra window padding [top/bottom, right/left]
+      title = true,
+      title_pos = 'center',
+      zindex = 1000,
     },
     layout = {
-      height = { min = 4, max = 25 }, -- min and max height of the columns
-      width = { min = 20, max = 50 }, -- min and max width of the columns
-      spacing = 10, -- spacing between columns
-      align = 'left', -- align columns left, center or right
+      width = { min = 40 }, -- min and max width of the columns
+      spacing = 5, -- spacing between columns
     },
-    ignore_missing = false, -- enable this to hide mappings for which you didn't specify a label
+    filter = function(mapping)
+      -- example to exclude mappings without a description
+      return mapping.desc and mapping.desc ~= ''
+    end,
+    notify = false,
+    icons = {
+      breadcrumb = '»', -- symbol used in the command line area that shows your active key combo
+      separator = '➜', -- symbol used between a key and it's label
+      group = '+', -- symbol prepended to a group
+      ellipsis = '…',
+      -- set to false to disable all mapping icons,
+      -- both those explicitely added in a mapping
+      -- and those from rules
+      mappings = true,
+      --- See `lua/which-key/icons.lua` for more details
+      --- Set to `false` to disable keymap icons from rules
+      ---@type wk.IconRule[]|false
+      rules = {},
+      -- use the highlights from mini.icons
+      -- When `false`, it will use `WhichKeyIcon` instead
+      colors = true,
+      -- used by key format
+      keys = {
+        Up = ' ',
+        Down = ' ',
+        Left = ' ',
+        Right = ' ',
+        C = '󰘴 ',
+        M = '󰘵 ',
+        D = '󰘳 ',
+        S = '󰘶 ',
+        CR = '󰌑 ',
+        Esc = '󱊷 ',
+        ScrollWheelDown = '󱕐 ',
+        ScrollWheelUp = '󱕑 ',
+        NL = '󰌑 ',
+        BS = '<-',
+        Space = '󱁐 ',
+        Tab = '󰌒 ',
+        F1 = '󱊫',
+        F2 = '󱊬',
+        F3 = '󱊭',
+        F4 = '󱊮',
+        F5 = '󱊯',
+        F6 = '󱊰',
+        F7 = '󱊱',
+        F8 = '󱊲',
+        F9 = '󱊳',
+        F10 = '󱊴',
+        F11 = '󱊵',
+        F12 = '󱊶',
+      },
+    },
     show_help = true, -- show help message on the command line when the popup is visible
     show_keys = true, -- show the currently pressed key and its label as a message in the command line
   },
@@ -171,15 +227,6 @@ M.setup = function()
       name = 'Treesitter',
       i = { ':TSConfigInfo<cr>', 'Info' },
     },
-  }
-
-  local g_options = {
-    mode = 'n', -- NORMAL mode
-    prefix = 'g',
-    buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
-    silent = true, -- use `silent` when creating keymaps
-    noremap = true, -- use `noremap` when creating keymaps
-    nowait = true, -- use `nowait` when creating keymaps
   }
 
   -- Register keys
