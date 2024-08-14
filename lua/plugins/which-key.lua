@@ -182,18 +182,20 @@ M.setup = function()
     nowait = true, -- use `nowait` when creating keymaps
   }
 
-  local g_mappings = {
-    d = { '<cmd>Telescope lsp_definitions<cr>', 'Go-to Definition' },
-    D = { '<cmd>lua vim.lsp.buf.declaration<cr>', 'Go-to Declaration' },
-    h = { '<cmd>lua vim.lsp.buf.hover()<cr>', 'Go-to Hover' },
-    I = { '<cmd>Telescope lsp_implementations<cr>', 'Go-to Implementation' },
-    r = { '<cmd>Telescope lsp_references<cr>', 'Go-to References' },
-    t = { '<cmd>Telescope lsp_type_definitions<cr>', 'Go-to Type Definition' },
-  }
-
   -- Register keys
   require('which-key').register(leader_mappings, leader_options)
-  require('which-key').register(g_mappings, g_options)
+
+  require('which-key').add {
+    {
+      mode = 'n',
+      { 'gd', '<cmd>Telescope lsp_definitions<cr>', desc = 'Go-to Definition' },
+      { 'gD', '<cmd>lua vim.lsp.buf.declaration<cr>', desc = 'Go-to Declaration' },
+      { 'gh', '<cmd>lua vim.lsp.buf.hover()<cr>', desc = 'Go-to Hover' },
+      { 'gI', '<cmd>Telescope lsp_implementations<cr>', desc = 'Go-to Implementation' },
+      { 'gr', '<cmd>Telescope lsp_references<cr>', desc = 'Go-to References' },
+      { 'gt', '<cmd>Telescope lsp_type_definitions<cr>', desc = 'Go-to Type Definition' },
+    },
+  }
 end
 
 return M
