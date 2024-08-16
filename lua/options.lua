@@ -72,4 +72,13 @@ vim.opt.pumheight = 10 -- pop up menu height
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = false
 
+-- Tab settings
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
+vim.opt.sidescrolloff = 8
+
+-- Don't use swap files
+vim.opt.swapfile = false
+
 -- vim: ts=2 sts=2 sw=2 et

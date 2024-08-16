@@ -1,8 +1,8 @@
 return {
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-  { 'github/copilot.vim' },
-  { 'xiyaowong/transparent.nvim' },
+  -- { 'github/copilot.vim' },
+  -- { 'xiyaowong/transparent.nvim' },
   -- "gc" to comment visual regions/lines
   {
     'numToStr/Comment.nvim',
@@ -148,6 +148,7 @@ return {
       { 'folke/neodev.nvim', opts = {} },
     },
     config = function()
+      require('lspconfig.server_configurations.tsserver').default_config.root_dir = require('lspconfig.util').root_pattern '.git'
       -- Brief aside: **What is LSP?**
       --
       -- LSP is an initialism you've probably heard, but might not understand what it is.
@@ -276,6 +277,26 @@ return {
           end,
         },
       }
+      vim.cmd [[autocmd! ColorScheme * highlight NormalFloat guibg=#1f2335]]
+      vim.cmd [[autocmd! ColorScheme * highlight FloatBorder guifg=white guibg=#1f2335]]
+
+      local border = {
+        { '╭', 'FloatBorder' },
+        { '─', 'FloatBorder' },
+        { '╮', 'FloatBorder' },
+        { '│', 'FloatBorder' },
+        { '╯', 'FloatBorder' },
+        { '─', 'FloatBorder' },
+        { '╰', 'FloatBorder' },
+        { '│', 'FloatBorder' },
+      }
+      local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+
+      function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+        opts = opts or {}
+        opts.border = opts.border or border
+        return orig_util_open_floating_preview(contents, syntax, opts, ...)
+      end
     end,
   },
   { -- Autoformat
@@ -349,6 +370,10 @@ return {
       luasnip.config.setup {}
 
       cmp.setup {
+        window = {
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
+        },
         snippet = {
           expand = function(args)
             luasnip.lsp_expand(args.body)

@@ -88,9 +88,9 @@ M.setup = function()
     nowait = true, -- use `nowait` when creating keymaps
   }
   local leader_mappings = {
-    w = { '<cmd>w!<CR>', 'Save' },
-    q = { '<cmd>confirm q<CR>', 'Quit' },
-    c = { '<cmd>BufferKill<CR>', 'Close Buffer' },
+    w = { '<cmd>w!<cr>', 'Save' },
+    q = { '<cmd>confirm q<cr>', 'Quit' },
+    c = { '<cmd>BufferKill<cr>', 'Close Buffer' },
     e = { '<cmd>NvimTreeToggle<CR>', 'Explorer' },
     f = {
       function()
