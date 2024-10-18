@@ -91,10 +91,12 @@ M.setup = function()
     w = { '<cmd>w!<cr>', 'Save' },
     q = { '<cmd>confirm q<cr>', 'Quit' },
     c = { '<cmd>BufferKill<cr>', 'Close Buffer' },
-    e = { '<cmd>NvimTreeToggle<CR>', 'Explorer' },
+    e = { '<cmd>lua MiniFiles.open(vim.api.nvim_buf_get_name(0))<cr>', 'Explorer' },
     f = {
       function()
-        require('telescope.builtin').find_files()
+        require('telescope.builtin').find_files {
+          path_display = { 'truncate' },
+        }
       end,
       'Find file',
     },
@@ -198,6 +200,7 @@ M.setup = function()
           require('telescope.builtin').live_grep {
             grep_open_files = true,
             prompt_title = 'Live Grep in Open Files',
+            path_display = { 'truncate' },
           }
         end,
         'Find Text in Open Files',
@@ -205,8 +208,23 @@ M.setup = function()
       b = { '<cmd>Telescope git_branches<cr>', 'Checkout branch' },
       c = { '<cmd>Telescope colorscheme<cr>', 'Colorscheme' },
       f = { '<cmd>Telescope find_files<cr>', 'Find File' },
-      r = { '<cmd>Telescope oldfiles<cr>', 'Open Recent File' },
-      t = { '<cmd>Telescope live_grep<cr>', 'Find Text' },
+      r = {
+        function()
+          require('telescope.builtin').oldfiles {
+            path_display = { 'truncate' },
+          }
+        end,
+        'Open Recent File',
+      },
+      t = {
+        function()
+          require('telescope.builtin').live_grep {
+            prompt_title = 'Live Grep',
+            path_display = { 'truncate' },
+          }
+        end,
+        'Find Text',
+      },
       k = { '<cmd>Telescope keymaps<cr>', 'Keymaps' },
       C = { '<cmd>Telescope commands<cr>', 'Commands' },
       l = { '<cmd>Telescope resume<cr>', 'Resume last search' },

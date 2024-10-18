@@ -1,8 +1,24 @@
 return {
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-  -- { 'github/copilot.vim' },
-  -- { 'xiyaowong/transparent.nvim' },
+  { 'github/copilot.vim' },
+  -- {
+  --   'CopilotC-Nvim/CopilotChat.nvim',
+  --   branch = 'canary',
+  --   dependencies = {
+  --     { 'zbirenbaum/copilot.lua' }, -- or github/copilot.vim
+  --     { 'nvim-lua/plenary.nvim' }, -- for curl, log wrapper
+  --   },
+  --   build = 'make tiktoken', -- Only on MacOS or Linux
+  --   opts = {
+  --     debug = true, -- Enable debugging
+  --     -- See Configuration section for rest
+  --   },
+  --   config = function()
+  --     require('plugins.copilotchat').setup()
+  --   end,
+  -- },
+  { 'xiyaowong/transparent.nvim' },
   -- "gc" to comment visual regions/lines
   {
     'numToStr/Comment.nvim',
@@ -148,7 +164,7 @@ return {
       { 'folke/neodev.nvim', opts = {} },
     },
     config = function()
-      require('lspconfig.server_configurations.tsserver').default_config.root_dir = require('lspconfig.util').root_pattern '.git'
+      require('lspconfig.configs.ts_ls').default_config.root_dir = require('lspconfig.util').root_pattern '.git'
       -- Brief aside: **What is LSP?**
       --
       -- LSP is an initialism you've probably heard, but might not understand what it is.
@@ -229,8 +245,8 @@ return {
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
-        -- But for many setups, the LSP (`tsserver`) will work just fine
-        tsserver = {},
+        -- But for many setups, the LSP (`ts_ls`) will work just fine
+        ts_ls = {},
         --
 
         lua_ls = {
@@ -271,7 +287,7 @@ return {
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for tsserver)
+            -- certain features of an LSP (for example, turning off formatting for ts_ls)
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
           end,
@@ -476,11 +492,17 @@ return {
   -- Highlight todo, notes, etc in comments
   {
     'folke/todo-comments.nvim',
-    event = 'VimEnter',
     dependencies = { 'nvim-lua/plenary.nvim' },
-    opts = { signs = false },
     config = function()
-      require('todo-comments').setup()
+      require('todo-comments').setup {
+        signs = true,
+        colors = {
+          error = '#ff0000',
+          warning = '#ffaf00',
+          info = '#00afaf',
+          hint = '#005f87',
+        },
+      }
     end,
   },
 
@@ -504,6 +526,16 @@ return {
 
       -- Automatically close brackets
       require('mini.pairs').setup()
+
+      -- Mini file explorer
+      require('mini.files').setup {
+        windows = {
+          max_number = 2,
+          preview = true,
+          width_focus = 80,
+          width_preview = 80,
+        },
+      }
 
       -- Start page
       require('mini.starter').setup {
@@ -616,16 +648,16 @@ return {
       }
     end,
   },
-  {
-    'nvim-tree/nvim-tree.lua',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function()
-      require('plugins.nvim-tree').setup()
-    end,
-    enabled = true,
-    cmd = { 'NvimTreeToggle', 'NvimTreeOpen', 'NvimTreeFocus', 'NvimTreeFindFileToggle' },
-    event = 'User DirOpened',
-  },
+  -- {
+  --   'nvim-tree/nvim-tree.lua',
+  --   dependencies = { 'nvim-tree/nvim-web-devicons' },
+  --   config = function()
+  --     require('plugins.nvim-tree').setup()
+  --   end,
+  --   enabled = true,
+  --   cmd = { 'NvimTreeToggle', 'NvimTreeOpen', 'NvimTreeFocus', 'NvimTreeFindFileToggle' },
+  --   event = 'User DirOpened',
+  -- },
   { 'hiphish/rainbow-delimiters.nvim' },
   {
     'nvim-lualine/lualine.nvim',
@@ -652,6 +684,12 @@ return {
       require('persistence').setup {}
     end,
   },
+  -- {
+  --   'norcalli/nvim-colorizer.lua',
+  --   config = function()
+  --     require('colorizer').setup()
+  --   end,
+  -- },
 }
 
 -- vim: ts=2 sts=2 sw=2 et
