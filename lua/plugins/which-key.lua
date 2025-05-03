@@ -100,6 +100,11 @@ M.setup = function()
       end,
       'Find file',
     },
+    a = {
+      name = '(AI) CodeCompanion',
+      c = { '<cmd>CodeCompanionChat<cr>', 'CodeCompanion Chat' },
+      t = { '<cmd>CodeCompanionActions<cr>', 'CodeCompanion Action Palette' },
+    },
     b = {
       name = 'Buffers',
       j = { '<cmd>BufferLinePick<cr>', 'Jump' },

@@ -1,23 +1,42 @@
 return {
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-  { 'github/copilot.vim' },
+  {
+    'supermaven-inc/supermaven-nvim',
+    config = function()
+      require('supermaven-nvim').setup {
+        keymaps = {
+          accept_suggestion = '<C-l>',
+        },
+      }
+    end,
+  },
   -- {
-  --   'CopilotC-Nvim/CopilotChat.nvim',
-  --   branch = 'canary',
-  --   dependencies = {
-  --     { 'zbirenbaum/copilot.lua' }, -- or github/copilot.vim
-  --     { 'nvim-lua/plenary.nvim' }, -- for curl, log wrapper
-  --   },
-  --   build = 'make tiktoken', -- Only on MacOS or Linux
-  --   opts = {
-  --     debug = true, -- Enable debugging
-  --     -- See Configuration section for rest
-  --   },
+  --   'github/copilot.vim',
+  --   lazy = false, -- Load immediately
   --   config = function()
-  --     require('plugins.copilotchat').setup()
+  --     -- Disable Copilot's default Tab mapping
+  --     vim.g.copilot_no_tab_map = 1
+  --     vim.g.copilot_settings = { selectedCompletionModel = 'gpt-4o-copilot' }
+  --
+  --     vim.keymap.set('i', '<C-l>', 'copilot#Accept("<CR>")', {
+  --       expr = true,
+  --       silent = true,
+  --       replace_keycodes = false,
+  --       desc = 'Accept Copilot suggestion',
+  --     })
   --   end,
   -- },
+  {
+    'olimorris/codecompanion.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    config = function()
+      require('plugins.codecompanion').setup()
+    end,
+  },
   { 'xiyaowong/transparent.nvim' },
   -- "gc" to comment visual regions/lines
   {
@@ -78,7 +97,6 @@ return {
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
-    branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
@@ -429,19 +447,19 @@ return {
           --  function $name($args)
           --    $body
           --  end
-          --
+
           -- <c-l> will move you to the right of each of the expansion locations.
           -- <c-h> is similar, except moving you backwards.
-          ['<C-l>'] = cmp.mapping(function()
-            if luasnip.expand_or_locally_jumpable() then
-              luasnip.expand_or_jump()
-            end
-          end, { 'i', 's' }),
-          ['<C-h>'] = cmp.mapping(function()
-            if luasnip.locally_jumpable(-1) then
-              luasnip.jump(-1)
-            end
-          end, { 'i', 's' }),
+          -- ['<C-l>'] = cmp.mapping(function()
+          --   if luasnip.expand_or_locally_jumpable() then
+          --     luasnip.expand_or_jump()
+          --   end
+          -- end, { 'i', 's' }),
+          -- ['<C-h>'] = cmp.mapping(function()
+          --   if luasnip.locally_jumpable(-1) then
+          --     luasnip.jump(-1)
+          --   end
+          -- end, { 'i', 's' }),
 
           -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -527,6 +545,9 @@ return {
       -- Automatically close brackets
       require('mini.pairs').setup()
 
+      -- Mini diffs
+      require('mini.diff').setup()
+
       -- Mini file explorer
       require('mini.files').setup {
         windows = {
@@ -541,15 +562,18 @@ return {
       require('mini.starter').setup {
         footer = os.date(),
         header = table.concat({
-          [[ _        _______  _______          _________ _______ ]],
-          [[( (    /|(  ____ \(  ___  )|\     /|\__   __/(       )]],
-          [[|  \  ( || (    \/| (   ) || )   ( |   ) (   | () () |]],
-          [[|   \ | || (__    | |   | || |   | |   | |   | || || |]],
-          [[| (\ \) ||  __)   | |   | |( (   ) )   | |   | |(_)| |]],
-          [[| | \   || (      | |   | | \ \_/ /    | |   | |   | |]],
-          [[| )  \  || (____/\| (___) |  \   /  ___) (___| )   ( |]],
-          [[|/    )_)(_______/(_______)   \_/   \_______/|/     \|]],
-          [[                                                      ]],
+
+          [[ .-------------------.   .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .----------------. ]],
+          [[| .-----------------. | | .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |]],
+          [[| |    _  ______    | | | |   ______     | || |  _______     | || |      __      | || |     ______   | || |  ____  ____  | || |     _____    | |]],
+          [[| |   / // ____ `.  | | | |  |_   __ \   | || | |_   __ \    | || |     /  \     | || |   .' ___  |  | || | |_   ||   _| | || |    |_   _|   | |]],
+          [[| |  / / `'  __) |  | | | |    | |__) |  | || |   | |__) |   | || |    / /\ \    | || |  / .'   \_|  | || |   | |__| |   | || |      | |     | |]],
+          [[| | < <  _  |__ '.  | | | |    |  ___/   | || |   |  __ /    | || |   / ____ \   | || |  | |         | || |   |  __  |   | || |      | |     | |]],
+          [[| |  \ \\ \____) |  | | | |   _| |_      | || |  _| |  \ \_  | || | _/ /    \ \_ | || |  \ `.___.'\  | || |  _| |  | |_  | || |     _| |_    | |]],
+          [[| |   \_\\______.'  | | | |  |_____|     | || | |____| |___| | || ||____|  |____|| || |   `._____.'  | || | |____||____| | || |    |_____|   | |]],
+          [[| |                 | | | |              | || |              | || |              | || |              | || |              | || |              | |]],
+          [[| '-----------------' | | '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |]],
+          [[ '-------------------'   '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------' ]],
         }, '\n'),
         items = {
           {
@@ -648,16 +672,6 @@ return {
       }
     end,
   },
-  -- {
-  --   'nvim-tree/nvim-tree.lua',
-  --   dependencies = { 'nvim-tree/nvim-web-devicons' },
-  --   config = function()
-  --     require('plugins.nvim-tree').setup()
-  --   end,
-  --   enabled = true,
-  --   cmd = { 'NvimTreeToggle', 'NvimTreeOpen', 'NvimTreeFocus', 'NvimTreeFindFileToggle' },
-  --   event = 'User DirOpened',
-  -- },
   { 'hiphish/rainbow-delimiters.nvim' },
   {
     'nvim-lualine/lualine.nvim',
@@ -684,12 +698,6 @@ return {
       require('persistence').setup {}
     end,
   },
-  -- {
-  --   'norcalli/nvim-colorizer.lua',
-  --   config = function()
-  --     require('colorizer').setup()
-  --   end,
-  -- },
 }
 
 -- vim: ts=2 sts=2 sw=2 et

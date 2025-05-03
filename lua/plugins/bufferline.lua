@@ -90,7 +90,7 @@ M.config = {
     enforce_regular_tabs = false,
     always_show_bufferline = false,
     hover = {
-      enabled = false, -- requires nvim 0.8+
+      enabled = true, -- requires nvim 0.8+
       delay = 200,
       reveal = { 'close' },
     },
