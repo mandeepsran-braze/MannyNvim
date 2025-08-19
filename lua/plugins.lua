@@ -3,6 +3,7 @@ return {
   'tpope/vim-sleuth',
   {
     'supermaven-inc/supermaven-nvim',
+    event = 'InsertEnter',
     config = function()
       require('supermaven-nvim').setup {
         keymaps = {
@@ -331,7 +332,7 @@ return {
   },
   { -- Autoformat
     'stevearc/conform.nvim',
-    lazy = false,
+    event = { 'BufWritePre', 'BufNewFile' },
     opts = {
       notify_on_error = false,
       format_on_save = false,
@@ -649,6 +650,7 @@ return {
   -- { import = 'custom.plugins' },
   {
     'romgrk/nvim-treesitter-context',
+    event = { 'BufReadPost', 'BufNewFile' },
     config = function()
       require('treesitter-context').setup {
         enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)

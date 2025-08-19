@@ -58,7 +58,6 @@ vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
 vim.opt.backup = false
-vim.opt.cmdheight = 1
 vim.opt.completeopt = { 'menuone', 'noselect' }
 
 vim.opt.conceallevel = 0 -- so that `` is visible in markdown files
