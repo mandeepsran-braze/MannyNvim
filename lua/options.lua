@@ -65,7 +65,6 @@ vim.opt.conceallevel = 0 -- so that `` is visible in markdown files
 vim.opt.fileencoding = 'utf-8' -- the encoding written to a file
 vim.opt.foldmethod = 'manual' -- folding, set to "expr" for treesitter based folding
 vim.opt.foldexpr = '' -- set to "nvim_treesitter#foldexpr()" for treesitter based folding
-vim.opt.hidden = true -- required to keep multiple buffers and open multiple buffers
 
 vim.opt.pumheight = 10 -- pop up menu height
 
