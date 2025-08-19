@@ -64,7 +64,7 @@ local defaults = {
     -- QuickFix
     ["]q"] = ":cnext<CR>",
     ["[q"] = ":cprev<CR>",
-    ["<C-q>"] = ":call QuickFixToggle()<CR>",
+    ["<C-q>"] = ":copen<CR>",
   },
 
   term_mode = {

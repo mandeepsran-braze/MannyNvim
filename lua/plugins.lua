@@ -3,6 +3,7 @@ return {
   'tpope/vim-sleuth',
   {
     'supermaven-inc/supermaven-nvim',
+    event = 'InsertEnter',
     config = function()
       require('supermaven-nvim').setup {
         keymaps = {
@@ -11,22 +12,6 @@ return {
       }
     end,
   },
-  -- {
-  --   'github/copilot.vim',
-  --   lazy = false, -- Load immediately
-  --   config = function()
-  --     -- Disable Copilot's default Tab mapping
-  --     vim.g.copilot_no_tab_map = 1
-  --     vim.g.copilot_settings = { selectedCompletionModel = 'gpt-4o-copilot' }
-  --
-  --     vim.keymap.set('i', '<C-l>', 'copilot#Accept("<CR>")', {
-  --       expr = true,
-  --       silent = true,
-  --       replace_keycodes = false,
-  --       desc = 'Accept Copilot suggestion',
-  --     })
-  --   end,
-  -- },
   {
     'olimorris/codecompanion.nvim',
     dependencies = {
@@ -37,10 +22,14 @@ return {
       require('plugins.codecompanion').setup()
     end,
   },
-  { 'xiyaowong/transparent.nvim' },
+  {
+    'xiyaowong/transparent.nvim',
+    cmd = { 'TransparentEnable', 'TransparentDisable', 'TransparentToggle' },
+  },
   -- "gc" to comment visual regions/lines
   {
     'numToStr/Comment.nvim',
+    event = { 'BufReadPre', 'BufNewFile' },
     config = function()
       require('Comment').setup()
     end,
@@ -84,6 +73,14 @@ return {
     'akinsho/toggleterm.nvim',
     config = function()
       require('plugins.toggleterm').setup()
+    end,
+  },
+  {
+    'nvim-tree/nvim-tree.lua',
+    dependencies = 'nvim-tree/nvim-web-devicons',
+    cmd = { 'NvimTreeToggle', 'NvimTreeOpen', 'NvimTreeFocus', 'NvimTreeFindFile', 'NvimTreeCollapse' },
+    config = function()
+      require('plugins.nvim-tree').setup()
     end,
   },
 
@@ -335,7 +332,7 @@ return {
   },
   { -- Autoformat
     'stevearc/conform.nvim',
-    lazy = false,
+    event = { 'BufWritePre', 'BufNewFile' },
     opts = {
       notify_on_error = false,
       format_on_save = false,
@@ -653,6 +650,7 @@ return {
   -- { import = 'custom.plugins' },
   {
     'romgrk/nvim-treesitter-context',
+    event = { 'BufReadPost', 'BufNewFile' },
     config = function()
       require('treesitter-context').setup {
         enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
@@ -696,28 +694,6 @@ return {
     event = 'BufReadPre', -- this will only start session saving when an actual file was opened
     config = function()
       require('persistence').setup {}
-    end,
-  },
-  {
-    'luukvbaal/statuscol.nvim',
-    config = function()
-      -- local builtin = require("statuscol.builtin")
-      require('statuscol').setup {
-        -- configuration goes here, for example:
-        -- relculright = true,
-        -- segments = {
-        --   { text = { builtin.foldfunc }, click = "v:lua.ScFa" },
-        --   {
-        --     sign = { namespace = { "diagnostic/signs" }, maxwidth = 2, auto = true },
-        --     click = "v:lua.ScSa"
-        --   },
-        --   { text = { builtin.lnumfunc }, click = "v:lua.ScLa", },
-        --   {
-        --     sign = { name = { ".*" }, maxwidth = 2, colwidth = 1, auto = true, wrap = true },
-        --     click = "v:lua.ScSa"
-        --   },
-        -- }
-      }
     end,
   },
 }
