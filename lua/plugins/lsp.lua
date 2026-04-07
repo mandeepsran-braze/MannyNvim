@@ -68,7 +68,7 @@ return {
         severity_sort = true,
         float = {
           border = "rounded",
-          source = "always",
+          source = true,
         },
       })
 
@@ -86,14 +86,14 @@ return {
           map("gh", vim.lsp.buf.hover,                                    "Hover")
           map("gI", function() Snacks.picker.lsp_implementations() end,  "Go to Implementation")
           map("gr", function() Snacks.picker.lsp_references() end,       "Go to References")
-          map("gt", function() Snacks.picker.lsp_type_definitions() end, "Go to Type Definition")
+          map("gy", function() Snacks.picker.lsp_type_definitions() end, "Go to Type Definition")
 
           -- LSP leader group
           require("which-key").add({
             { "<leader>la", vim.lsp.buf.code_action,                                                                  desc = "Code Action",          buffer = event.buf },
             { "<leader>ld", function() Snacks.picker.diagnostics({ buf_only = true }) end,                           desc = "Buffer Diagnostics",   buffer = event.buf },
             { "<leader>lw", function() Snacks.picker.diagnostics() end,                                               desc = "Workspace Diagnostics", buffer = event.buf },
-            { "<leader>lf", function() require("conform").format({ async = true, lsp_fallback = true }) end,          desc = "Format",               buffer = event.buf },
+            { "<leader>lf", function() require("conform").format({ async = true, lsp_format = "fallback" }) end,      desc = "Format",               buffer = event.buf },
             { "<leader>li", "<cmd>LspInfo<cr>",                                                                        desc = "Info",                 buffer = event.buf },
             { "<leader>lI", "<cmd>Mason<cr>",                                                                          desc = "Mason Info",           buffer = event.buf },
             { "<leader>lr", vim.lsp.buf.rename,                                                                        desc = "Rename",               buffer = event.buf },
@@ -151,7 +151,7 @@ return {
   {
     "saghen/blink.cmp",
     version = "*",
-    event = "InsertEnter",
+    lazy = true,
     opts = {
       keymap = {
         preset = "default",
