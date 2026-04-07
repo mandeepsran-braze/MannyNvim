@@ -162,7 +162,7 @@ return {
   {
     "akinsho/bufferline.nvim",
     event = "VeryLazy",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
+    dependencies = { "nvim-tree/nvim-web-devicons", "folke/snacks.nvim" },
     opts = {
       options = {
         mode = "buffers",
