@@ -129,7 +129,6 @@ return {
             { "<leader>r", group = "Rails" },
             { "<leader>s", group = "Search" },
             { "<leader>p", group = "Plugins" },
-            { "<leader>a", group = "AI" },
             { "<leader>u", group = "UI/Utils" },
           })
         end,
