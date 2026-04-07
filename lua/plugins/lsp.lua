@@ -28,13 +28,13 @@ return {
     },
   },
 
-  -- Mason + lspconfig bridge
+  -- Mason + native LSP bridge (v2 API: automatic_enable replaces automatic_installation)
   {
     "williamboman/mason-lspconfig.nvim",
-    dependencies = { "williamboman/mason.nvim" },
+    dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
     opts = {
-      ensure_installed = { "ruby_lsp", "lua_ls" },
-      automatic_installation = true,
+      ensure_installed = { "ruby_lsp", "lua_ls", "ts_ls" },
+      automatic_enable = true,
     },
   },
 
@@ -47,7 +47,8 @@ return {
     },
   },
 
-  -- LSP configuration
+  -- nvim-lspconfig: in runtimepath for server metadata used by mason-lspconfig.
+  -- We configure servers via vim.lsp.config() (Neovim 0.11 native API), not lspconfig.setup().
   {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
@@ -56,10 +57,12 @@ return {
       "saghen/blink.cmp",
     },
     config = function()
-      local lspconfig = require("lspconfig")
-      local capabilities = require("blink.cmp").get_lsp_capabilities()
+      -- Global capabilities for all servers
+      vim.lsp.config("*", {
+        capabilities = require("blink.cmp").get_lsp_capabilities(),
+      })
 
-      -- Diagnostic display config
+      -- Diagnostic display
       vim.diagnostic.config({
         virtual_text = { prefix = "●" },
         signs = true,
@@ -80,7 +83,6 @@ return {
             vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
           end
 
-          -- Go-to keymaps
           map("gd", function() Snacks.picker.lsp_definitions() end,      "Go to Definition")
           map("gD", vim.lsp.buf.declaration,                              "Go to Declaration")
           map("gh", vim.lsp.buf.hover,                                    "Hover")
@@ -88,25 +90,23 @@ return {
           map("gr", function() Snacks.picker.lsp_references() end,       "Go to References")
           map("gy", function() Snacks.picker.lsp_type_definitions() end, "Go to Type Definition")
 
-          -- LSP leader group
           require("which-key").add({
-            { "<leader>la", vim.lsp.buf.code_action,                                                                  desc = "Code Action",          buffer = event.buf },
-            { "<leader>ld", function() Snacks.picker.diagnostics({ buf_only = true }) end,                           desc = "Buffer Diagnostics",   buffer = event.buf },
+            { "<leader>la", vim.lsp.buf.code_action,                                                                  desc = "Code Action",           buffer = event.buf },
+            { "<leader>ld", function() Snacks.picker.diagnostics({ buf_only = true }) end,                           desc = "Buffer Diagnostics",    buffer = event.buf },
             { "<leader>lw", function() Snacks.picker.diagnostics() end,                                               desc = "Workspace Diagnostics", buffer = event.buf },
-            { "<leader>lf", function() require("conform").format({ async = true, lsp_format = "fallback" }) end,      desc = "Format",               buffer = event.buf },
-            { "<leader>li", "<cmd>LspInfo<cr>",                                                                        desc = "Info",                 buffer = event.buf },
-            { "<leader>lI", "<cmd>Mason<cr>",                                                                          desc = "Mason Info",           buffer = event.buf },
-            { "<leader>lr", vim.lsp.buf.rename,                                                                        desc = "Rename",               buffer = event.buf },
-            { "<leader>ls", function() Snacks.picker.lsp_symbols() end,                                               desc = "Document Symbols",     buffer = event.buf },
-            { "<leader>lS", function() Snacks.picker.lsp_workspace_symbols() end,                                     desc = "Workspace Symbols",    buffer = event.buf },
-            { "<leader>ll", vim.lsp.codelens.run,                                                                      desc = "CodeLens Action",      buffer = event.buf },
+            { "<leader>lf", function() require("conform").format({ async = true, lsp_format = "fallback" }) end,      desc = "Format",                buffer = event.buf },
+            { "<leader>li", "<cmd>LspInfo<cr>",                                                                        desc = "Info",                  buffer = event.buf },
+            { "<leader>lI", "<cmd>Mason<cr>",                                                                          desc = "Mason Info",            buffer = event.buf },
+            { "<leader>lr", vim.lsp.buf.rename,                                                                        desc = "Rename",                buffer = event.buf },
+            { "<leader>ls", function() Snacks.picker.lsp_symbols() end,                                               desc = "Document Symbols",      buffer = event.buf },
+            { "<leader>lS", function() Snacks.picker.lsp_workspace_symbols() end,                                     desc = "Workspace Symbols",     buffer = event.buf },
+            { "<leader>ll", vim.lsp.codelens.run,                                                                      desc = "CodeLens Action",       buffer = event.buf },
           })
         end,
       })
 
       -- Ruby LSP
-      lspconfig.ruby_lsp.setup({
-        capabilities = capabilities,
+      vim.lsp.config("ruby_lsp", {
         init_options = {
           formatter = "rubocop",
           linters = { "rubocop" },
@@ -114,39 +114,40 @@ return {
       })
 
       -- Lua LSP
-      lspconfig.lua_ls.setup({
-        capabilities = capabilities,
+      vim.lsp.config("lua_ls", {
         settings = {
           Lua = {
             runtime = { version = "LuaJIT" },
             diagnostics = { globals = { "vim", "Snacks" } },
-            workspace = {
-              checkThirdParty = false,
-            },
+            workspace = { checkThirdParty = false },
             telemetry = { enable = false },
+          },
+        },
+      })
+
+      -- TypeScript LSP (replaces typescript-tools.nvim)
+      vim.lsp.config("ts_ls", {
+        settings = {
+          typescript = {
+            inlayHints = {
+              includeInlayParameterNameHints = "all",
+              includeInlayPropertyDeclarationTypeHints = true,
+              includeInlayFunctionLikeReturnTypeHints = true,
+            },
+          },
+          javascript = {
+            inlayHints = {
+              includeInlayParameterNameHints = "all",
+              includeInlayPropertyDeclarationTypeHints = true,
+              includeInlayFunctionLikeReturnTypeHints = true,
+            },
           },
         },
       })
     end,
   },
 
-  -- TypeScript: direct tsserver communication (faster than ts_ls)
-  {
-    "pmizio/typescript-tools.nvim",
-    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-    ft = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
-    opts = {
-      settings = {
-        tsserver_file_preferences = {
-          includeInlayParameterNameHints = "all",
-          includeInlayPropertyDeclarationTypeHints = true,
-          includeInlayFunctionLikeReturnTypeHints = true,
-        },
-      },
-    },
-  },
-
-  -- Completion engine (replaces nvim-cmp)
+  -- Completion engine
   {
     "saghen/blink.cmp",
     version = "*",
@@ -154,13 +155,12 @@ return {
     opts = {
       keymap = {
         preset = "default",
-        -- Tab: accept top item if menu open, otherwise falls through to supermaven
-        ["<Tab>"]   = { "select_and_accept", "fallback" },
-        ["<C-j>"]   = { "select_next", "fallback" },
-        ["<C-k>"]   = { "select_prev", "fallback" },
-        ["<C-d>"]   = { "scroll_documentation_down", "fallback" },
-        ["<C-u>"]   = { "scroll_documentation_up", "fallback" },
-        ["<C-e>"]   = { "cancel", "fallback" },
+        ["<Tab>"] = { "select_and_accept", "fallback" },
+        ["<C-j>"] = { "select_next", "fallback" },
+        ["<C-k>"] = { "select_prev", "fallback" },
+        ["<C-d>"] = { "scroll_documentation_down", "fallback" },
+        ["<C-u>"] = { "scroll_documentation_up", "fallback" },
+        ["<C-e>"] = { "cancel", "fallback" },
       },
       appearance = {
         use_nvim_cmp_as_default = false,
@@ -181,7 +181,6 @@ return {
             treesitter = { "lsp" },
           },
         },
-        -- Disable blink ghost text: supermaven handles this
         ghost_text = { enabled = false },
       },
       signature = {
@@ -197,9 +196,9 @@ return {
     event = { "BufReadPre", "BufNewFile" },
     opts = {
       formatters_by_ft = {
-        lua    = { "stylua" },
-        ruby   = { "rubocop" },
-        eruby  = { "erb_lint" },
+        lua   = { "stylua" },
+        ruby  = { "rubocop" },
+        eruby = { "erb_lint" },
       },
       format_on_save = false,
       notify_on_error = true,

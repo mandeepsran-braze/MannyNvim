@@ -42,7 +42,7 @@ return {
     opts = {
       ensure_installed = {
         "lua", "luadoc",
-        "ruby", "eruby",
+        "ruby",
         "typescript", "tsx", "javascript",
         "html", "css", "json", "yaml", "toml",
         "markdown", "markdown_inline",
