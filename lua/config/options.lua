@@ -18,7 +18,6 @@ opt.undofile = true
 opt.swapfile = false
 opt.backup = false
 opt.fileencoding = "utf-8"
-opt.hidden = true
 
 -- Search
 opt.ignorecase = true

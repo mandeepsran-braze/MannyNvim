@@ -122,7 +122,6 @@ return {
             diagnostics = { globals = { "vim", "Snacks" } },
             workspace = {
               checkThirdParty = false,
-              library = vim.api.nvim_get_runtime_file("", true),
             },
             telemetry = { enable = false },
           },
@@ -195,7 +194,7 @@ return {
   -- Formatter
   {
     "stevearc/conform.nvim",
-    event = "BufWritePre",
+    event = { "BufReadPre", "BufNewFile" },
     opts = {
       formatters_by_ft = {
         lua    = { "stylua" },
